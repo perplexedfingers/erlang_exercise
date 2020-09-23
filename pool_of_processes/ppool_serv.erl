@@ -29,7 +29,7 @@ sync_queue(Name, Args) ->
     gen_server:call(Name, {sync, Args}, infinity).
 
 async_queue(Name, Args) ->
-    gen_server:call(Name, {async, Args}).
+    gen_server:cast(Name, {async, Args}).
 
 stop(Name) ->
     gen_server:call(Name, stop).

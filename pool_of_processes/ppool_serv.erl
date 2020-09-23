@@ -5,7 +5,7 @@
 
 -define(SPEC(MFA),
         {worker_sup,
-         {ppool_worker, start_link, [MFA]},
+         {ppool_worker_sup, start_link, [MFA]},
          temporary,
          10000,
          supervisor,

@@ -22,7 +22,7 @@ init([]) ->
 start_pool(Name, Limit, MFA) ->
     ChildSpec = {Name,
                  {ppool_sup, start_link, [Name, Limit, MFA]},
-                 peranent, 10500, supervisor, [ppool_sup]},
+                 permanent, 10500, supervisor, [ppool_sup]},
     supervisor:start_child(ppool, ChildSpec).
 
 stop_pool(Name) ->

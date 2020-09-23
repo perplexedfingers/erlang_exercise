@@ -37,3 +37,11 @@ stop(Name) ->
 init({Limit, MFA, Sup}) ->
     self() ! {start_worker_supervisor, Sup, MFA},
     {ok, #state{limit=Limit, refs=gb_sets:empty()}}.
+
+handle_info({start_worker_supervisor, Sup, MFA}, S = #state{}) ->
+    {ok, Pid} = supervisor:start_child(Sup, ?SPEC(MFA)),
+    link(Pid),
+    {noreply, S#state{sup=Pid}};
+handle_info(Msg, State) ->
+    io:format("Unknown message: ~p~n", [Msg]),
+    {noreply, State}.

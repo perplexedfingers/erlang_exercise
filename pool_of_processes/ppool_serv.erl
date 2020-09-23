@@ -62,3 +62,12 @@ handle_call(stop, _From, State) ->
     {stop, nomal, ok, State};
 handle_call(_Msg, _From, State) ->
     {noreply, State}.
+
+handle_cast({async, Args}, S=#state{limit=N, sup=Sup, refs=R}) when N > 0 ->
+    {ok, Pid} = supervisor:start_child(Sup, Args),
+    Ref = erlang:monitor(process, Pid),
+    {noreply, S#state{limit=N-1, refs=fb_sets:add(Ref, R)}};
+handle_cast({async, Args}, S=#state{limit=N, queue=Q}) when N =< 0 ->
+    {noreply, S#state{queue=queue:in(Args, Q)}};
+handle_case(_Msg, State) ->
+    {noreply, State}.

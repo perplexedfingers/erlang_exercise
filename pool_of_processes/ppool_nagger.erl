@@ -12,3 +12,31 @@ stop(Pid) ->
 
 init({Task, Delay, Max, SendTo}) ->
     {ok, {Task, Dealy, Max, SendTo}, Delay}.
+
+handle_call(stop, _From, State) ->
+    {stop, normal, ok, State};
+handle_call(_Msg, _From, State) ->
+    {noreply, State}.
+
+handle_cast(_Msg, State) ->
+    {noreply, State}.
+
+handle_info(timeout, {Task, Delay, Max, SendTo}) ->
+    SendTo ! {self(), Task},
+    if Max =:= infinity ->
+           {noreply, {Task, Delay, Max, SendTo}, Delay};
+       Max =< 1 ->
+           {stop, normal, {Task, Delay, 0, SendTo}};
+       Max > 1 ->
+           {noreply, {Task, Delay, Max-1, SendTo}, Delay}
+    end.
+%% This should not happen. Otherwise this woker would becasue these is no timeout.
+%% handle_info(_Msg, State) ->
+%%     {noreply, State}.
+
+
+code_change(_OldVersion, State, _Extra) ->
+    {ok, State}.
+
+terminate(_Reason, _State) ->
+    ok.

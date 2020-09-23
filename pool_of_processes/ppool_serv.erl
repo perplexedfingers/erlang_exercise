@@ -35,6 +35,5 @@ stop(Name) ->
     gen_server:call(Name, stop).
 
 init({Limit, MFA, Sup}) ->
-    {ok, Pid} = supervisor:start_child(Sup, ?SPEC(MFA)),
-    link(Pid),
+    self() ! {start_worker_supervisor, Sup, MFA},
     {ok, #state{limit=Limit, refs=gb_sets:empty()}}.

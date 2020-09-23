@@ -9,3 +9,6 @@ start_link(Task, Deplay, Max, SendTo) ->
 
 stop(Pid) ->
     gen_server:call(Pid, stop).
+
+init({Task, Delay, Max, SendTo}) ->
+    {ok, {Task, Dealy, Max, SendTo}, Delay}.

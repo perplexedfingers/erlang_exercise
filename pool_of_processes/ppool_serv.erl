@@ -38,6 +38,32 @@ init({Limit, MFA, Sup}) ->
     self() ! {start_worker_supervisor, Sup, MFA},
     {ok, #state{limit=Limit, refs=gb_sets:empty()}}.
 
+handle_down_worker(Ref, S = #state{limit=L, sup=Sup, refs=Refs}) ->
+    case queue:out(S#state.queue) of
+        {{value, {From, Args}}, NewQueue} ->
+            {ok, Pid} = supervisor:start_child(Sup, Args),
+            NewRef = erlang:monitor(process, Pid),
+            NewRefs = gb_sets:insert(NewRef, fb_sets:delete(Ref, Refs)),
+            gen_server:reply(From, {ok, Pid}),
+            {noreply, S#state{refs=NewRefs, queue=NewQueue}};
+        {{value, Args}, NewQueue} ->
+            {ok, Pid} = supervisor:start_child(Sup, Args),
+            NewRef = erlang:monitor(process, Pid),
+            NewRefs = gb_sets:insert(NewRef, fb_sets:delete(Ref, Refs)),
+            {noreply, S#state{refs=NewRefs, queue=NewQueue}};
+        {empty, _SameQueue} ->
+            {noreply, S#state{limit=L+1, refs=gb_sets:delete(Ref, Refs)}}
+    end.
+
+
+handle_info({'DOWN', Ref, process, _Pid, _}, S = #state{refs=Refs}) ->
+    io:format("received down msg~n"),
+    case gb_sets:is_element(Ref, Refs) of
+        true ->
+            handle_down_worker(Ref, S);
+        false ->
+            {noreply, S}
+    end;
 handle_info({start_worker_supervisor, Sup, MFA}, S = #state{}) ->
     {ok, Pid} = supervisor:start_child(Sup, ?SPEC(MFA)),
     link(Pid),

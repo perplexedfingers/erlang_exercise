@@ -34,6 +34,12 @@ async_queue(Name, Args) ->
 stop(Name) ->
     gen_server:call(Name, stop).
 
+code_change(_OldVersion, State, _Extra) ->
+    {ok, State}.
+
+terminate(_Reason, _State) ->
+    ok.
+
 init({Limit, MFA, Sup}) ->
     self() ! {start_worker_supervisor, Sup, MFA},
     {ok, #state{limit=Limit, refs=gb_sets:empty()}}.

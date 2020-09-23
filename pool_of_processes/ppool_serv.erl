@@ -58,3 +58,7 @@ handle_call({sync, Args}, _From, S = #state{limit=N, sup=Sup, refs=R}) when N > 
     {reply, {ok, Pid}, S#state{limit=N-1, refs=gb_sets:add(Ref, R)}};
 handle_call({sync, Args}, From, S = #state{queue=Q}) ->
     {noreply, S#state{queue=queue:in({From, Args}, Q)}};
+handle_call(stop, _From, State) ->
+    {stop, nomal, ok, State};
+handle_call(_Msg, _From, State) ->
+    {noreply, State}.

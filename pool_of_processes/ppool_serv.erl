@@ -9,7 +9,7 @@
          temporary,
          10000,
          supervisor,
-         [ppool_worker_sup]})
+         [ppool_worker_sup]}).
 
 -record(state, {limit=0,
                sup,
@@ -101,5 +101,5 @@ handle_cast({async, Args}, S=#state{limit=N, sup=Sup, refs=R}) when N > 0 ->
     {noreply, S#state{limit=N-1, refs=fb_sets:add(Ref, R)}};
 handle_cast({async, Args}, S=#state{limit=N, queue=Q}) when N =< 0 ->
     {noreply, S#state{queue=queue:in(Args, Q)}};
-handle_case(_Msg, State) ->
+handle_cast(_Msg, State) ->
     {noreply, State}.

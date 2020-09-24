@@ -12,3 +12,17 @@ find_erl(Name, Queue) ->
         regular -> handle_regular_file(Name, Queue);
         _Other -> dequeue_and_run(Queue)
     end.
+
+handle_directory(Dir, Queue) ->
+    case file:list_dir(Dir) of
+        {ok, []} ->
+            dequeue_and_run(Queue);
+        {ok, Files} ->
+            dequeue_and_run(enqueue_many(Dir, Files, Queue))
+    end.
+
+dequeue_and_run(Queue) ->
+    case queue:out(Queue) of
+        {empty, _} -> done;
+        {{value, File}, NewQueue} -> find_erl(File, NewQueue)
+    end.

@@ -76,7 +76,7 @@ auth_test_() ->
 %%% Setups/teardowns
 find_unique_name() ->
     application:start(ppool),
-    Name = list_to_atom(lists:flatten(io_lib:format("~p",[now()]))),
+    Name = list_to_atom(lists:flatten(io_lib:format("~p",[erlang:timestamp()]))),
     ?assertEqual(undefined, whereis(Name)),
     Name.
 

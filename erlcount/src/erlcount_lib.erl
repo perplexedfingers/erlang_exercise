@@ -26,3 +26,15 @@ dequeue_and_run(Queue) ->
         {empty, _} -> done;
         {{value, File}, NewQueue} -> find_erl(File, NewQueue)
     end.
+
+enqueue_many(Path, Files, Queue) ->
+    F = fun(File, Q) -> queue:in(filename:join(Path, File), Q) end,
+    lists:foldl(F, Queue, Files).
+
+handle_regular_file(Name, Queue) ->
+    case filename:extension(Name) of
+        ".erl" ->
+            {continue, Name, fun() -> dequeue_and_run(Queue) end};
+        _NonErl ->
+            dequeue_and_run(Queue)
+    end.

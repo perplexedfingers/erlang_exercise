@@ -54,3 +54,14 @@ listening(done, #data{regex=Re, refs=[]}) ->
      {stop, normal, done};
 listening(done, Data) ->
     {next_state, listening, Data}.
+
+handle_event({complete, Regex, Ref, Count}, State, Data = #date{regex=Re, ref=Refs}) ->
+    {Regex, OldCount} = lists:keyfind(Regex, 1, Re),
+    NewRe = lists:keyreplace(Regex, 1, Re, {Regex, OldCount + Count}),
+    NewData = Data#data{regex=NewRe, refs=Refs -- [Ref]},
+    case State of
+        dispatching ->
+            {next_state, dispatching, NewData};
+        listening ->
+        listening(done, NewData)
+    end.

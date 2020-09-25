@@ -21,7 +21,7 @@ init([]) ->
     case lists:all(fun valid_regex/1, Regex) of
         true ->
             self() ! {start, Dir},
-            {ok, dispatching, #data{regex=[{R, 0} || R <- Regex]};
+            {ok, dispatching, #data{regex=[{R, 0} || R <- Regex]}};
         false ->
             {stop, invalid_regex}
     end.

@@ -36,3 +36,13 @@ valid_regex(Regex) ->
 handle_info({start, Dir}, State, Data) ->
     gen_fsm:send_event(self(), erlcount_lib:find_erl(Dir)),
     {next_state, State, Data}.
+
+dispatching({continue, File, Continuation}, Data = #data{regex=Re, refs=Refs}) ->
+    F = fun({Regex, _Count}, NewRefs) ->
+                Ref = make_ref(),
+                ppool:async_queue(?POOL, [self(), Ref, File, Regex]),
+                [Ref | NewRefs]
+        end,
+    NewRefs = lists:foldl(F, Refs, Re),
+    gen_fsm:send_event(self(), Continuation()),
+    {next_state, dispatching, Data#data{refs=NewRefs}};

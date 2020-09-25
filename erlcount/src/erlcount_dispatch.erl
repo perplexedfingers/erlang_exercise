@@ -46,3 +46,11 @@ dispatching({continue, File, Continuation}, Data = #data{regex=Re, refs=Refs}) -
     NewRefs = lists:foldl(F, Refs, Re),
     gen_fsm:send_event(self(), Continuation()),
     {next_state, dispatching, Data#data{refs=NewRefs}};
+dispatching(done, Data) ->
+    listening(done, Data).
+
+listening(done, #data{regex=Re, refs=[]}) ->
+    [io:format("Regex ~s has ~p results~n", [R, C] || {R, C} <- Re)],
+     {stop, normal, done};
+listening(done, Data) ->
+    {next_state, listening, Data}.

@@ -32,3 +32,7 @@ valid_regex(Regex) ->
     catch
         error:badarg -> false
     end.
+
+handle_info({start, Dir}, State, Data) ->
+    gen_fsm:send_event(self(), erlcount_lib:find_erl(Dir)),
+    {next_state, State, Data}.

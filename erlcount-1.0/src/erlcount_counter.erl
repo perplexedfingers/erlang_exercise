@@ -25,7 +25,7 @@ handle_cast(_Msg, State) ->
 handle_info(start, S=#state{re=Re, ref=Ref}) ->
     {ok, Bin} = file:read_file(S#state.file),
     Count = erlcount_lib:regex_count(Re, Bin),
-    erlcount_dispatcher:complete(S#state.dispatcher, Re, Ref, Count),
+    erlcount_dispatch:complete(S#state.dispatcher, Re, Ref, Count),
     {stop, normal, S}.
 
 terminate(_Reason, _State) ->

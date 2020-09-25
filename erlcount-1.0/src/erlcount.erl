@@ -3,7 +3,7 @@
 -export([start/2, stop/1]).
 
 start(normal, _Args) ->
-    elrcount_sup:start_link().
+    erlcount_sup:start_link().
 
 stop(_State) ->
     ok.

@@ -65,3 +65,13 @@ handle_event({complete, Regex, Ref, Count}, State, Data = #date{regex=Re, ref=Re
         listening ->
         listening(done, NewData)
     end.
+
+handle_sync_event(Event, _From, State, Data) ->
+    io:format("Unexpected event: ~p~n", [Event]),
+    {next_state, State, Data}.
+
+terminate(_Reason, _State, _Data) ->
+    ok.
+
+code_change(_OldVersion, State, Data, _Extra) ->
+    {ok, State, Data}.

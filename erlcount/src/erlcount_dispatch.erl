@@ -25,3 +25,10 @@ init([]) ->
         false ->
             {stop, invalid_regex}
     end.
+
+valid_regex(Regex) ->
+    try re:run("", Regex) of
+        _ -> true
+    catch
+        error:badarg -> false
+    end.

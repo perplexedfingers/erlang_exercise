@@ -50,12 +50,12 @@ dispatching(done, Data) ->
     listening(done, Data).
 
 listening(done, #data{regex=Re, refs=[]}) ->
-    [io:format("Regex ~s has ~p results~n", [R, C] || {R, C} <- Re)],
+    [io:format("Regex ~s has ~p results~n", [R, C]) || {R, C} <- Re],
      {stop, normal, done};
 listening(done, Data) ->
     {next_state, listening, Data}.
 
-handle_event({complete, Regex, Ref, Count}, State, Data = #date{regex=Re, ref=Refs}) ->
+handle_event({complete, Regex, Ref, Count}, State, Data = #data{regex=Re, refs=Refs}) ->
     {Regex, OldCount} = lists:keyfind(Regex, 1, Re),
     NewRe = lists:keyreplace(Regex, 1, Re, {Regex, OldCount + Count}),
     NewData = Data#data{regex=NewRe, refs=Refs -- [Ref]},

@@ -19,7 +19,7 @@ init([DispatcherPid, Ref, FileName, Regex]) ->
 handle_call(_Msg, _From, State) ->
     {noreply, State}.
 
-handle_case(_Msg, State) ->
+handle_cast(_Msg, State) ->
     {noreply, State}.
 
 handle_info(start, S=#state{re=Re, ref=Ref}) ->

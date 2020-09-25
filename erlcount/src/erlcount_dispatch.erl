@@ -11,7 +11,7 @@ start_link() ->
     gen_fsm:start_link(?MODULE, [], []).
 
 complete(Pid, Regex, Ref, Count) ->
-    gen_fsm:send_all_state_event(Pid, {complete, Rext, Ref, Count}).
+    gen_fsm:send_all_state_event(Pid, {complete, Regex, Ref, Count}).
 
 init([]) ->
     {ok, Regex} = application:get_env(regex),

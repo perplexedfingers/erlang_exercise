@@ -3,5 +3,5 @@
  {erts, "11.1"},
  [{kernel, "7.1"},
   {stdlib, "3.13.2"},
-  {ppool, "1.0.0", permenant},
+  {ppool, "1.0.0", permanent},
   {erlcount, "1.0.0", transient}]}.
